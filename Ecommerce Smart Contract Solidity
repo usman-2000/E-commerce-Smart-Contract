@@ -1,0 +1,40 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract EcommerceStore{
+    struct Product{
+        string title;
+        string desc;
+        address payable seller;
+        uint productID;
+        uint price;
+        address buyer;
+        bool delivered;
+    }
+
+    uint counter = 1;
+    Product[] public products;
+
+    function registerProduct(string memory _title,string memory _desc, uint _price) public {
+        require(_price>0,"The PRICE should be greater than 0");
+
+        Product memory tempProd;
+        tempProd.title = _title;
+        tempProd.desc = _desc;
+        tempProd.seller = payable (msg.sender);
+        tempProd.price = _price * 10**18;
+        tempProd.productID = counter;
+        products.push(tempProd);
+        counter++; 
+    }
+
+    function buy(uint _productID) public payable{
+        require(products[_productID-1].price== msg.value,"Please pay the exact price of the product");
+        require(products[_productID-1].seller != msg.sender,"Seller cannot buy his own product");
+        products[_productID-1].buyer = msg.sender;
+    }
+
+    function delivery(uint _productID) public {
+        
+    }
+}
